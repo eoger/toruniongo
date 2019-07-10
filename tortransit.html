@@ -21,18 +21,18 @@
       }
       document.getElementById("departures").appendChild(fragment);
     }
-
-    populateDepartures();
-    function onLoadCb() {
-      // Onload might get called multiple times, but that's alright.
-      const widget = document.getElementById("twitter-widget-0");
-      if (!widget) {
-        return;
+    async function customizeTwitterCSS() {
+      // Wait until the Twitter iframe has loaded.
+      let widget;
+      while (!widget) {
+        widget = document.getElementById("twitter-widget-0");
+        if (!widget) {
+          await new Promise(res => setTimeout(res, 50));
+        }
       }
       const doc = widget.contentDocument;
       const style = document.createElement("style");
       style.type = "text/css";
-      // Try to fit more tweets by altering the twitter CSS, brrr.
       style.innerHTML = `
         .TweetAuthor-screenName,
         .timeline-Tweet-actions {display: none !important;}
@@ -41,6 +41,8 @@
       `;
       doc.head.appendChild(style);
     }
+    populateDepartures();
+    customizeTwitterCSS();
   </script>
   <style type="text/css">
     :root {
@@ -107,7 +109,7 @@
     }
   </style>
 </head>
-  <body onload="onLoadCb()">
+  <body>
     <template id="departureTemplate">
       <div class="departure">
         <div class="routeinfo">
