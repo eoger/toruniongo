@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Union Station GO transit</title>
+  <script defer>
+    const GO_URL = "https://api.gotransit.com/Api/schedules/stops/UN/departures?Page=1&PageLimit=10";
+    async function populateDepartures() {
+      const response = await fetch(GO_URL);
+      const depaturesData = await response.json();
+      const fragment = document.createDocumentFragment();
+      const template = document.getElementById("departureTemplate");
+      for (const departure of depaturesData.items) {
+        const departureEl = document.importNode(template.content, true);
+        const vehicleTypeCls = departure.transitTypeName == "T" ? "train" : "bus";
+        departureEl.querySelector(".departure").classList.add(vehicleTypeCls);
+        departureEl.querySelector(".service").textContent = departure.service;
+        departureEl.querySelector(".stop").textContent = departure.stopsDisplay;
+        departureEl.querySelector(".scheduledtime").textContent = departure.scheduledTime;
+        fragment.appendChild(departureEl);
+      }
+      document.getElementById("departures").appendChild(fragment);
+    }
+
+    populateDepartures();
+    function onLoadCb() {
+      // Onload might get called multiple times, but that's alright.
+      const widget = document.getElementById("twitter-widget-0");
+      if (!widget) {
+        return;
+      }
+      const doc = widget.contentDocument;
+      const style = document.createElement("style");
+      style.type = "text/css";
+      // Try to fit more tweets by altering the twitter CSS, brrr.
+      style.innerHTML = `
+        .TweetAuthor-screenName,
+        .timeline-Tweet-actions {display: none !important;}
+        .timeline-Tweet-text {font-size: 20px !important; line-weight:20px !important;}
+        .timeline-Tweet-metadata {margin-top: -25px !important;}
+      `;
+      doc.head.appendChild(style);
+    }
+  </script>
+  <style type="text/css">
+    :root {
+      font-family: 'Helvetica', 'Arial', sans-serif;
+      color: #1d1d1d;
+    }
+    #main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto 1fr;
+      grid-template-areas: "header header" "departures tweets";
+    }
+    #main > * {
+      padding: 10px;
+    }
+    #header {
+      text-align: center;
+      font-weight: bold;
+      font-size: 4em;
+      grid-area: header;
+      padding: 10px;
+    }
+    #departures {
+      grid-area: departures;
+    }
+    #tweets { grid-area: tweets; }
+    .departure {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+    .departure:nth-child(odd) {
+      background: #f2f2f2
+    }
+    .departure.bus:before,
+    .departure.train:before {
+      font-size: 2em;
+      padding-right: 15px;
+    }
+    .departure.bus:before {
+      content: "🚌";
+    }
+    .departure.train:before {
+      content: "🚂";
+    }
+    .routeinfo {
+      flex: 1;
+    }
+    .routeinfo .service {
+      font-weight: bold;
+      font-size: 1.4em;
+      padding-bottom: 5px;
+    }
+    .routeinfo .stop {
+      font-size: 1.2em;
+    }
+    .scheduledtime {
+      font-weight: bold;
+      font-size: 2.2em;
+    }
+    #gologo {
+      width: 50px;
+      position: absolute;
+    }
+  </style>
+</head>
+  <body onload="onLoadCb()">
+    <template id="departureTemplate">
+      <div class="departure">
+        <div class="routeinfo">
+          <div class="service"></div>
+          <div class="stop"></div>
+        </div>
+        <div class="scheduledtime"></div>
+      </div>
+    </template>
+    <svg id="gologo" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="-1 -1 68 33" fill="#256c2f">
+      <path d="M50.5 0A15.56 15.56 0 0 0 35 14h31A15.56 15.56 0 0 0 50.5 0zM0 15.5A15.526 15.526 0 0 0 14 31V0A15.526 15.526 0 0 0 0 15.5zM17 0v14h14A15.7 15.7 0 0 0 17 0zm33.5 31A15.583 15.583 0 0 0 66 17H35a15.583 15.583 0 0 0 15.5 14zM17 31h14V17H17v14z"/>
+    </svg>
+    <div id="main">
+      <div id="header">Union Station GO Transit</div>
+      <div id="departures"></div>
+      <div id="tweets">
+        <a class="twitter-timeline" data-chrome="noheader nofooter noborders transparent" data-lang="en" data-dnt="true" data-theme="light" data-link-color="#2B7BB9" href="https://twitter.com/GlobalTom/lists/go-transit-lines?ref_src=twsrc%5Etfw"></a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
