@@ -4,7 +4,7 @@
   <title>Union Station GO transit</title>
   <meta charset="utf-8">
   <script defer>
-    const GO_URL = "https://api.gotransit.com/Api/schedules/stops/UN/departures?Page=1&PageLimit=10";
+    const GO_URL = "https://api.gotransit.com/Api/schedules/stops/UN/departures?Page=1&PageLimit=20";
     async function populateDepartures() {
       const response = await fetch(GO_URL);
       const depaturesData = await response.json();
