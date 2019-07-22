@@ -4,7 +4,7 @@
   <title>Union Station GO transit</title>
   <meta charset="utf-8">
   <script defer>
-    const GO_URL = "https://api.gotransit.com/Api/schedules/stops/UN/departures?Page=1&PageLimit=20";
+    const GO_URL = "https://api.gotransit.com/Api/schedules/stops/UN/departures?Page=1&PageLimit=30";
     async function populateDepartures() {
       const response = await fetch(GO_URL);
       const depaturesData = await response.json();
@@ -36,7 +36,7 @@
       style.innerHTML = `
         .TweetAuthor-screenName,
         .timeline-Tweet-actions {display: none !important;}
-        .timeline-Tweet-text {font-size: 20px !important; line-weight:20px !important;}
+        .timeline-Tweet-text {font-size: 25px !important; line-weight:25px !important;}
         .timeline-Tweet-metadata {margin-top: -25px !important;}
       `;
       doc.head.appendChild(style);
@@ -51,8 +51,8 @@
     }
     #main {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto 1fr;
+      grid-template-columns: 60% 1fr;
+      grid-template-rows: auto 100%;
       grid-template-areas: "header header" "departures tweets";
     }
     #main > * {
@@ -67,6 +67,9 @@
     }
     #departures {
       grid-area: departures;
+      column-count: 2;
+      height: 90vh;
+      overflow: hidden;
     }
     #tweets { grid-area: tweets; }
     .departure {
@@ -90,14 +93,18 @@
     }
     .routeinfo {
       flex: 1;
+      min-width: 0px;
     }
     .routeinfo .service {
       font-weight: bold;
-      font-size: 1.4em;
+      font-size: 2.0em;
       padding-bottom: 5px;
     }
     .routeinfo .stop {
       font-size: 1.2em;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .scheduledtime {
       font-weight: bold;
