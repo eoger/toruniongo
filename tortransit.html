@@ -10,7 +10,11 @@
       const depaturesData = await response.json();
       const fragment = document.createDocumentFragment();
       const template = document.getElementById("departureTemplate");
+      const now = new Date();
       for (const departure of depaturesData.items) {
+        if (new Date(departure.scheduledDateTime) < now) {
+          continue;
+        }
         const departureEl = document.importNode(template.content, true);
         const vehicleTypeCls = departure.transitTypeName == "T" ? "train" : "bus";
         departureEl.querySelector(".departure").classList.add(vehicleTypeCls);
